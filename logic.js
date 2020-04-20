@@ -11,28 +11,57 @@ d3.json(quakeURL, function(data) {
   console.log("hello world");
   console.log(data.features);
 
-  // function onEachFeature(feature, layer){
-  //   layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${new Date(feature.properties.time)}</p>`)
-  // }
-  //   var earthquakes = L.geoJSON(data, {
-  //     onEachFeature: onEachFeature
-  //   })
+  function onEachFeature(feature, layer){
+    L.circleMarker(feature.geometry.coordinates)
+    
+    // (`<h3>${feature.geometry.coordinates}</h3><hr><p>${new Magnitude(feature.properties.mag)}</p>`)
+  }
+    var earthquakes = L.geoJSON(data, {
+      pointToLayer: function(data, latlng){
+        console.log(latlng)
+        return L.circleMarker(latlng)
+      }
+    })
+    
+    // L.geoJSON(data, {
+    //   onEachFeature: onEachFeature
+    // })
 
-//     createImageBitmap(earthquakes);
+    createMap(earthquakes);
+
+    // L.geoJSON(data, {
+    //   pointToLayer: function(data, latlng){
+    //     console.log(latlng)
+    //     return L.circleMarker(latlng)
+    //   }
+  // }).bindPopup(function (layer) {
+  //     return layer.feature.properties.title;
+  // }).addTo(map);
 });
 
-// function createMap(earthquakes) {
-//   // Define streetmap layer
-// var streetmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-//   attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-//   maxZoom: 18,
-//   id: "mapbox.streets",
-//   accessToken: API_KEY
-// });
+
+function createMap(earthquakes) {
+  // Define streetmap layer
+var streetmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+  maxZoom: 18,
+  id: "mapbox.streets",
+  accessToken: API_KEY
+});
+
+  // Define a baseMaps object to hold our base layers
+  var baseMaps = {
+    "Street Map": streetmap,
+  };
+
+  var overlayMap = {
+    EarthQuakes: earthquakes
+  }
+
 
 var myMap = L.map("map", {
     center: [37.339591851359174, -121.91802978515625],
-    zoom: 13
+    zoom: 5
   });
 
   L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
@@ -41,3 +70,10 @@ var myMap = L.map("map", {
     id: "mapbox.streets",
     accessToken: API_KEY
   }).addTo(myMap);
+
+
+  L.control.layers(baseMaps, overlayMap, {
+    collapsed: false
+  }).addTo(myMap);
+
+}

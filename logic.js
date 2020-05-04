@@ -9,34 +9,34 @@ var quakeURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_wee
 // Get request to query URL
 d3.json(quakeURL, function(data) { 
   console.log("hello world");
-  console.log(data.features);
+  createFeatures(data.features);
+  console.log(data)
 
+  function createFeatures(earthquakeData){
+
+
+  // Creating marker
   function onEachFeature(feature, layer){
     L.circleMarker(feature.geometry.coordinates)
     
     // (`<h3>${feature.geometry.coordinates}</h3><hr><p>${new Magnitude(feature.properties.mag)}</p>`)
   }
-    var earthquakes = L.geoJSON(data, {
-      pointToLayer: function(data, latlng){
-        console.log(latlng)
-        return L.circleMarker(latlng)
-      }
-    })
-    
-    // L.geoJSON(data, {
-    //   onEachFeature: onEachFeature
+    // var earthquakes = L.geoJSON(data, {
+      // pointToLayer: function(data, latlng){
+      //   console.log(latlng)
+      //   return L.circleMarker(latlng)
+      // }
     // })
+  }
+    var earthquakes = new L.LayerGroup()
 
     createMap(earthquakes);
 
-    // L.geoJSON(data, {
-    //   pointToLayer: function(data, latlng){
-    //     console.log(latlng)
-    //     return L.circleMarker(latlng)
-    //   }
-  // }).bindPopup(function (layer) {
-  //     return layer.feature.properties.title;
-  // }).addTo(map);
+    L.geoJSON(data, {
+      pointToLayer: function(data, latlng){
+        console.log(latlng)
+        return L.circleMarker(latlng)
+    }}).addTo(earthquakes)
 });
 
 
